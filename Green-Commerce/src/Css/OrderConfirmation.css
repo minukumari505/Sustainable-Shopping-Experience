@@ -1,0 +1,115 @@
+.confirmation-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 24px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .confirmation-title {
+    color: green;
+    font-size: 22px;
+    font-weight: bold;
+  }
+  
+  .checkmark {
+    font-size: 24px;
+    margin-right: 8px;
+  }
+  
+  .confirmation-note {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .shipping-info {
+    font-size: 15px;
+    margin-top: 20px;
+  }
+  
+  .separator {
+    margin: 16px 0;
+    border-top: 1px solid #ccc;
+  }
+  
+  .delivery-date {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .ordered-items {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .item-preview {
+    position: relative;
+  }
+  
+  .item-image {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .item-quantity {
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+    background: #fff;
+    border: 1px solid #aaa;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .recent-orders-link {
+    color: #0073e6;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .continue-btn-wrapper {
+    margin-top: 24px;
+    text-align: center;
+  }
+  
+  .continue-shopping-btn {
+    background-color: #ffd814;
+    color: #111;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: 1px solid #fcd200;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .continue-shopping-btn:hover {
+    background-color: #f7ca00;
+  }
+  
+  .cart-icon {
+    font-size: 18px;
+  }
+  
+  /* Animation */
+  .continue-shopping-btn.clicked {
+    animation: bounce 0.3s ease;
+  }
+  
+  @keyframes bounce {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }

@@ -1,0 +1,167 @@
+.group-setup-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.group-setup-container h1 {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: #111;
+}
+
+.group-setup-container p {
+  font-size: 14px;
+  color: #555;
+}
+
+.group-input {
+  margin-bottom: 16px;
+}
+
+.group-input label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.group-input input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.group-cart {
+  margin-top: 24px;
+}
+
+.group-cart-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.group-cart-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-right: 16px;
+}
+
+.share-section {
+  margin-top: 24px;
+}
+
+.share-link-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.share-link-box input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.share-link-box button {
+  background-color: #ffd814;
+  color: #111;
+  padding: 8px 16px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.create-group-btn {
+  margin-top: 20px;
+  background-color: #ffd814;
+  color: #111;
+  font-weight: bold;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.create-group-btn:hover {
+  background-color: #f7ca00;
+}
+
+/* 🟢 Badge Modal */
+.badge-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.badge-modal {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.badge-image {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  margin-bottom: 16px;
+}
+
+.badge-modal h2 {
+  margin: 10px 0;
+  font-size: 22px;
+  color: #007600;
+}
+
+.badge-modal p {
+  font-size: 16px;
+  color: #444;
+}
+
+.badge-close {
+  margin-top: 20px;
+  background-color: #f0c14b;
+  color: #111;
+  border: 1px solid #a88734;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}

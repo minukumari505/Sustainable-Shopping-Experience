@@ -1,0 +1,121 @@
+/* NearbyGroups.css */
+
+.nearby-groups-container {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f3f3f3;
+  }
+  
+  h1 {
+    color: #232f3e;
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  
+  .slider-section label {
+    font-weight: bold;
+    color: #111;
+    display: block;
+    margin-bottom: 6px;
+  }
+  
+  .slider-section input[type="range"] {
+    width: 100%;
+    margin-top: 8px;
+  }
+  
+  .group-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .group-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+  
+  .group-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .group-card h2 {
+    font-size: 18px;
+    color: #111;
+    margin-bottom: 8px;
+  }
+  
+  .group-card p {
+    font-size: 14px;
+    color: #333;
+    margin: 4px 0;
+  }
+  
+  .group-card button {
+    background-color: #ffa41c;
+    color: #111;
+    border: none;
+    padding: 10px 14px;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .group-card button:hover {
+    background-color: #f08804;
+  }
+  
+  .badge-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .badge-modal {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .badge-modal h3 {
+    margin-top: 10px;
+    color: #232f3e;
+  }
+  
+  .badge-modal p {
+    color: #555;
+    font-size: 15px;
+  }
+  
+  .badge-image {
+    width: 100px;
+    margin-bottom: 10px;
+  }
+  
+  .badge-close {
+    margin-top: 10px;
+    padding: 10px 16px;
+    background-color: #007185;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .badge-close:hover {
+    background-color: #004f5f;
+  }

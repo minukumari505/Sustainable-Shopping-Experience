@@ -1,0 +1,17 @@
+# # Ignore Python virtual environments
+myenv/
+
+recommendation_bundle.pkl
+
+# # Ignore compiled Python bytecode
+__pycache__/
+*.py[cod]
+
+# # Ignore pickle model files (optional but recommended)
+*.pkl
+
+# # VS Code settings (if present)
+.vscode/
+
+# # Environment variable files (if you ever use them)
+.env

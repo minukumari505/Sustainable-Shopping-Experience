@@ -1,0 +1,4 @@
+# Ignore your editor history snapshots
+.history/
+
+node_modules
