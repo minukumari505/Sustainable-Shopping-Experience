@@ -18,6 +18,7 @@ const IMAGE_BASE = 'http://localhost:8080/uploads';
 export default function ProductPage() {
     const [products, setProducts] = useState([]);
         const [error, setError] = useState(null);
+        const [loading, setLoading] = useState(true);
         const [, dispatch] = useStateValue();
         const addToBasket = () => {
             dispatch({
@@ -42,6 +43,7 @@ export default function ProductPage() {
             // define an async fetcher
             const fetchProducts = async () => {
                 try {
+                    setLoading(true);
                     const res = await fetch("http://localhost:8080/getproducts");
                     if (!res.ok) {
                         throw new Error(`Server responded ${res.status}`);
@@ -53,6 +55,9 @@ export default function ProductPage() {
                     console.error("Failed to fetch products:", err);
                     setError(err.message);
                 }
+                finally {
+                    setLoading(false);
+                }
             };
     
             fetchProducts();
@@ -60,7 +65,18 @@ export default function ProductPage() {
     
     const { id } = useParams();
     const product =  products.find((p) => p._id === id);
-   
+
+    if (loading) {
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem' }}>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 24, border: '6px solid #e0e0e0', borderTopColor: '#2d6a4f', animation: 'spin 1s linear infinite', margin: '0 auto' }} />
+                    <div style={{ marginTop: 12, color: '#555' }}>Loading product...</div>
+                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                </div>
+            </div>
+        );
+    }
 
     if (!product) {
         return (
