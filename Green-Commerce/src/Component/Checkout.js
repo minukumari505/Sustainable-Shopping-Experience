@@ -204,7 +204,11 @@ function Checkout() {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
+  const [couponValue, setCouponValue] = useState(0); // fraction (e.g. 0.05 for 5%)
+  const [couponMessage, setCouponMessage] = useState("");
+  const [couponMessageType, setCouponMessageType] = useState(""); // 'error' | 'success'
   const [donation, setDonation] = useState(0);
+  const [donationEnabled, setDonationEnabled] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState(-1);
   const [homeNo, setHomeNo] = useState("");
   const [pincode, setPincode] = useState("");
@@ -246,6 +250,7 @@ function Checkout() {
         quantity: item.quantity || 1,
       })),
       totalAmount: totalpayment,
+      donation: donationEnabled ? Number(donation || 0) : 0,
       ecoPackaging,
       deliveryDate: `${date.getDate()} ${months[date.getMonth()]}`,
       address:
@@ -302,13 +307,14 @@ function Checkout() {
 
   const itemTotalAfterDiscount = totalMRP - totalDiscount;
 
-  // Coupon logic: 5% off after MRP discount
-  const couponDiscount = couponApplied ? Math.round(itemTotalAfterDiscount * 0.05) : 0;
+  // Coupon logic: couponValue defines percentage discount
+  const couponDiscount = couponApplied && couponValue > 0 ? Math.round(itemTotalAfterDiscount * couponValue) : 0;
 
-  // Total payment after discounts
+  // Total payment after discounts and donation
   React.useEffect(() => {
-    SettotalPayment(itemTotalAfterDiscount - couponDiscount);
-  }, [itemTotalAfterDiscount, couponDiscount, basket]);
+    const donationAmt = donationEnabled ? Number(donation || 0) : 0;
+    SettotalPayment(itemTotalAfterDiscount - couponDiscount + donationAmt);
+  }, [itemTotalAfterDiscount, couponDiscount, donation, basket, couponValue]);
 
   const itemsSelectedCount = Object.keys(selectedItems).filter(
     (idx) => selectedItems[idx]
@@ -336,18 +342,42 @@ function Checkout() {
   const handleApplyCoupon = () => {
     setBlinkCoupon(true);
 
-    // After blink, apply coupon, scroll, and reset blink
+    const code = (couponCode || "").toString().trim().toUpperCase();
+    // Define allowed coupons here (key -> discount fraction)
+    const validCoupons = {
+      GREEN5: 0.05,
+      SAVE5: 0.05,
+    };
+
     setTimeout(() => {
       setBlinkCoupon(false);
-      setCouponApplied(true);
-      if (couponSectionRef.current) {
-        couponSectionRef.current.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+
+      if (!code) {
+        setCouponMessage('Please enter a coupon code.');
+        setCouponMessageType('error');
+        couponInputRef.current?.focus();
+        setTimeout(() => setCouponMessage(''), 4000);
+        return;
       }
-      if (couponInputRef.current) {
-        couponInputRef.current.focus();
+
+      if (validCoupons[code]) {
+        setCouponValue(validCoupons[code]);
+        setCouponApplied(true);
+        setCouponMessage('Coupon applied successfully.');
+        setCouponMessageType('success');
+        if (couponSectionRef.current) {
+          couponSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        couponInputRef.current?.blur();
+        setTimeout(() => setCouponMessage(''), 4000);
+      } else {
+        // invalid coupon - give feedback and keep couponApplied false
+        setCouponApplied(false);
+        setCouponValue(0);
+        setCouponMessage('Invalid coupon code. Please try a valid coupon.');
+        setCouponMessageType('error');
+        couponInputRef.current?.focus();
+        setTimeout(() => setCouponMessage(''), 4000);
       }
     }, 400); // blink time
   };
@@ -558,6 +588,13 @@ function Checkout() {
                   {couponApplied ? "Coupon Applied" : "APPLY"}
                 </button>
               </div>
+              {couponMessage && (
+                <div style={{ marginTop: 8 }}>
+                  <div style={{ padding: 8, borderRadius: 8, color: couponMessageType === 'error' ? '#7f1d1d' : '#064e3b', background: couponMessageType === 'error' ? '#fee2e2' : '#ecfdf5', fontWeight: 600 }}>
+                    {couponMessage}
+                  </div>
+                </div>
+              )}
             </motion.div>
 
             {/* Donation */}
@@ -571,14 +608,27 @@ function Checkout() {
                 SUPPORT TRANSFORMATIVE SOCIAL WORK IN INDIA
               </h3>
               <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <input type="checkbox" style={styles.checkbox} /> Donate and make a difference
+                <input
+                  type="checkbox"
+                  style={styles.checkbox}
+                  checked={donationEnabled}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setDonationEnabled(checked);
+                    if (!checked) setDonation(0);
+                  }}
+                />
+                Donate and make a difference
               </label>
               <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
                 {[10, 20, 50, 100].map((val) => (
                   <button
                     key={val}
-                    onClick={() => setDonation(val)}
-                    style={styles.donationBtn(donation === val)}
+                    onClick={() => {
+                      setDonation(val);
+                      setDonationEnabled(true);
+                    }}
+                    style={styles.donationBtn(donationEnabled && donation === val)}
                   >
                     ₹{val}
                   </button>
@@ -654,6 +704,12 @@ function Checkout() {
                 <div style={styles.summaryRow}>
                   <span>Platform Fee</span>
                   <span style={{ color: "#48BB78" }}>FREE</span>
+                </div>
+                <div style={styles.summaryRow}>
+                  <span>Donation</span>
+                  <span style={{ color: donationEnabled ? '#137a4f' : '#888' }}>
+                    ₹{donationEnabled ? Number(donation || 0) : 0}
+                  </span>
                 </div>
                 <div style={styles.totalRow}>
                   <span>Total Amount</span>
