@@ -229,15 +229,16 @@ function Checkout() {
       scalar: 1.2,
       spread: 120,
     };
-    const months = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
     confetti({ ...defaults, particleCount: 50, origin: { x: 0.5, y: 0.5 } });
     confetti({ ...defaults, particleCount: 40, origin: { x: 0.2, y: 0.4 } });
     confetti({ ...defaults, particleCount: 40, origin: { x: 0.8, y: 0.4 } });
     const date = new Date();
     date.setDate(date.getDate() + 14);
+    const deliveryDate = date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
     const userEmail = localStorage.getItem("email");
     const orderPayload = {
       userEmail,
@@ -252,7 +253,7 @@ function Checkout() {
       totalAmount: totalpayment,
       donation: donationEnabled ? Number(donation || 0) : 0,
       ecoPackaging,
-      deliveryDate: `${date.getDate()} ${months[date.getMonth()]}`,
+      deliveryDate,
       address:
         'Hostel J, Nit Jamshedpur, JAMSHEDPUR, JHARKHAND, 831014, India',
     };

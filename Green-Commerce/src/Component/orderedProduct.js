@@ -178,6 +178,7 @@ const OrderedProduct = ({
   totalAmount,
   quantity,
   deliveryDate,
+  placedAt,
   onReturn,
   onReview,
   onReturnBox,
@@ -187,6 +188,13 @@ const OrderedProduct = ({
   const src = `${IMAGE_BASE}/${filename}`;
   const [returned, setReturned] = useState(false);
   const eco_friendly = badge_id > 0;
+  const legacyDeliveryDate = new Date(placedAt || Date.now());
+  legacyDeliveryDate.setDate(legacyDeliveryDate.getDate() + 14);
+  const displayDeliveryDate = deliveryDate
+    ? /\d{4}/.test(String(deliveryDate))
+      ? deliveryDate
+      : `${deliveryDate} ${legacyDeliveryDate.getFullYear()}`
+    : "Not specified";
 
   const handleReturnBox = () => {
     setReturned(true);
@@ -210,7 +218,7 @@ const OrderedProduct = ({
           )}
         </TitleRow>
         <Meta>
-          <FaCalendarAlt /> Delivery: <b>{deliveryDate} 2025</b>
+          <FaCalendarAlt /> Delivery: <b>{displayDeliveryDate}</b>
         </Meta>
         <Details>
           <span>Qty: <b>{quantity}</b></span>

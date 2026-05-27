@@ -102,6 +102,7 @@ export default function MyOrders() {
                 totalAmount={order.totalAmount}
                 quantity={item.quantity}
                 deliveryDate={order.deliveryDate}
+                placedAt={order.placedAt}
               />
             ))
           )
