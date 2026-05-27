@@ -1,18 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
+import cat1 from '../../assets/SuggestGreenCategory_carosel/Bathroom.png';
+import cat2 from '../../assets/SuggestGreenCategory_carosel/Clean Beauty.png';
+import cat3 from '../../assets/SuggestGreenCategory_carosel/Dental Hygiene.png';
+import cat4 from '../../assets/SuggestGreenCategory_carosel/Kids.png';
+import cat5 from '../../assets/SuggestGreenCategory_carosel/Home Kitchen.png';
+import cat6 from '../../assets/SuggestGreenCategory_carosel/Cleaning.png';
+import cat7 from '../../assets/SuggestGreenCategory_carosel/Hair Care.png';
+import cat8 from '../../assets/SuggestGreenCategory_carosel/Laundry.png';
+import cat9 from '../../assets/SuggestGreenCategory_carosel/Personal Hygiene.png';
+import cat10 from '../../assets/SuggestGreenCategory_carosel/Pet Care.png';
+import cat11 from '../../assets/SuggestGreenCategory_carosel/Outdoor Living.png';
 
 export default function SuggestGreenCarousel() {
     const categories = [
-        { image: 'https://earthhero.com/cdn/shop/files/Bathroom_4c111570-ccef-44d2-8aed-b11f77152bcf.jpg?v=1718900352&width=700', label: 'Bathroom' },
-        { image: 'https://earthhero.com/cdn/shop/files/beauty.jpg?v=1719251640&width=700', label: 'Clean Beauty' },
-        { image: 'https://earthhero.com/cdn/shop/files/Kids_9a29b7e4-14d0-4b30-aa1f-9cf60d4637d2.jpg?v=1718900525&width=700', label: 'Kids' },
-        { image: 'https://earthhero.com/cdn/shop/files/Dental_Hygiene1.jpg?v=1718900453&width=700', label: 'Dental Hygiene' },
-        { image: 'https://earthhero.com/cdn/shop/files/kitchen_bb6daf84-c7c7-4a04-a299-c163a34537a1.jpg?v=1719251509&width=700', label: 'Home & Kitchen' },
-        { image: 'https://earthhero.com/cdn/shop/files/Cleaning_2258b8b5-2451-477e-9e17-4a98941d66c4.jpg?v=1718900423&width=700', label: 'Cleaning' },
-        { image: 'https://earthhero.com/cdn/shop/files/Hair_Care.jpg?v=1718900478&width=700', label: 'Hair Care' },
-        { image: 'https://earthhero.com/cdn/shop/files/Laundry_4454eeef-e7bc-4379-8cbf-28b8e517a610.jpg?v=1718900548&width=700', label: 'Laundry' },
-        { image: 'https://earthhero.com/cdn/shop/files/bathroom_3dfd2ac8-c947-4c6f-a053-079dc6e1864a.jpg?v=1719251972&width=700', label: 'Personal Hygiene' },
-        { image: 'https://earthhero.com/cdn/shop/files/pets_8999b726-395f-4f66-85df-5dcaac5ad7ef.jpg?v=1719251763&width=700', label: 'Pet Care' },
-        { image: 'https://earthhero.com/cdn/shop/files/Outdoors.jpg?v=1718900566&width=700', label: 'Outdoor Living' }
+        { image: cat1, label: 'Bathroom' },
+        { image: cat2, label: 'Clean Beauty' },
+        { image: cat3, label: 'Dental Hygiene' },
+        { image: cat4, label: 'Kids' },
+        { image: cat5, label: 'Home & Kitchen' },
+        { image: cat6, label: 'Cleaning' },
+        { image: cat7, label: 'Hair Care' },
+        { image: cat8, label: 'Laundry' },
+        { image: cat9, label: 'Personal Hygiene' },
+        { image: cat10, label: 'Pet Care' },
+        { image: cat11, label: 'Outdoor Living' }
     ];
 
     const visibleCount = 3;
@@ -58,16 +69,18 @@ export default function SuggestGreenCarousel() {
         display: 'flex', alignItems: 'center', justifyContent: 'center'
     };
     const viewport = { overflow: 'hidden', flex: 1 };
+    const itemWidth = 250; // px
+    const gap = 16; // px
     const track = {
         display: 'flex', transition: 'transform 0.5s ease',
-        transform: `translateX(-${index * (250 + 16)}px)`
+        transform: `translateX(-${index * (itemWidth + gap)}px)`
     };
     const card = {
-        minWidth: '250px', marginRight: '16px', borderRadius: '8px', overflow: 'hidden',
+        minWidth: `${itemWidth}px`, marginRight: `${gap}px`, borderRadius: '8px', overflow: 'hidden',
         position: 'relative', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', cursor: 'pointer',
         transition: 'transform 0.3s'
     };
-    const imgStyle = { width: '100%', height: '200px', objectFit: 'cover' };
+    const imgStyle = { width: '100%', height: `${itemWidth}px`, objectFit: 'cover', imageRendering: 'auto' };
     const labelStyle = {
         position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
         color: '#fff', fontSize: '20px', textShadow: '0 2px 6px rgba(0,0,0,0.6)', textAlign: 'center'

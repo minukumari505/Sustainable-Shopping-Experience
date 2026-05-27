@@ -1,17 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
+import zwsImg from '../../assets/SuggestGreenBrands/zwsImg.png';
+import terracycleImg from '../../assets/SuggestGreenBrands/terracycleImg.png';
+import droppsImg from '../../assets/SuggestGreenBrands/droppsImg.png';
+import biobagImg from '../../assets/SuggestGreenBrands/biobagImg.png';
+import bumblerideImg from '../../assets/SuggestGreenBrands/bumblerideImg.png';
+import sudsEcoImg from '../../assets/SuggestGreenBrands/sudsEcoImg.png';
+import melioraImg from '../../assets/SuggestGreenBrands/melioraImg.png';
+import unpasteImg from '../../assets/SuggestGreenBrands/unpasteImg.png';
+import plaineImg from '../../assets/SuggestGreenBrands/plaineImg.png';
+import holyLambImg from '../../assets/SuggestGreenBrands/holyLambImg.png';
 
 export default function SuggestGreenBrands() {
     const brands = [
-        { name: 'ZWS Essentials', image: 'https://earthhero.com/cdn/shop/files/zero-waste-essentials_5a1d317d-8ae0-47f4-9c56-8d5d9672baff.jpg?v=1718987779&width=200', description: 'ZWS Essentials crafts sustainable household basics made from recycled materials, delivering eco-friendly quality without compromise.' },
-        { name: 'Terracycle', image: 'https://earthhero.com/cdn/shop/files/Terracycle_ee76e604-bddc-4267-90d3-b083ee501eb9.jpg?v=1718899410&width=300', description: 'Terracycle leads recycling innovation, transforming waste into new products through global upcycling programs.' },
-        { name: 'Meliora', image: 'https://earthhero.com/cdn/shop/files/meliora.jpg?v=1718894102&width=300', description: 'Meliora offers plant-based cleaning solutions free from harsh chemicals for a safer, greener home.' },
-        { name: 'Dropps', image: 'https://earthhero.com/cdn/shop/files/dopps.jpg?v=1718894169&width=300', description: 'Dropps provides water-soluble, plastic-free laundry and dishwasher pods that are powerful yet planet-friendly.' },
-        { name: 'BioBag', image: 'https://earthhero.com/cdn/shop/files/biobag.jpg?v=1718894190&width=300', description: 'BioBag produces compostable bags and films made from renewable raw materials to reduce plastic waste.' },
-        { name: 'Bumbleride', image: 'https://earthhero.com/cdn/shop/files/Bumbleride_8ece3d66-8dd0-4764-95b0-2572c2acc796.jpg?v=1718899484&width=300', description: 'Bumbleride creates eco-friendly, durable baby strollers and gear designed for urban and outdoor adventures.' },
-        { name: 'Un•Paste', image: 'https://earthhero.com/cdn/shop/files/unpaste.jpg?v=1718894221&width=300', description: 'Un•Paste offers toothpaste tablets in plastic-free packaging, promoting zero-waste oral care.' },
-        { name: 'Plaine Products', image: 'https://earthhero.com/cdn/shop/files/plaine-products.jpg?v=1718894241&width=300', description: 'Plaine Products provides refillable personal care essentials in aluminum bottles to eliminate single-use plastics.' },
-        { name: 'Holy Lamb Organics', image: 'https://earthhero.com/cdn/shop/files/holy-lamb-organics.jpg?v=1718894257&width=300', description: 'Holy Lamb Organics delivers certified organic wool products that are sustainable, cozy, and hypoallergenic.' },
-        { name: 'Suds & Eco', image: 'https://earthhero.com/cdn/shop/files/Suds_Eco.jpg?v=1718899502&width=300', description: 'Suds & Eco creates plant-based, cruelty-free body care items packaged in biodegradable materials.' }
+        { name: 'ZWS Essentials', image: zwsImg, description: 'ZWS Essentials crafts sustainable household basics made from recycled materials, delivering eco-friendly quality without compromise.' },
+        { name: 'Terracycle', image: terracycleImg, description: 'Terracycle leads recycling innovation, transforming waste into new products through global upcycling programs.' },
+        { name: 'Meliora', image: melioraImg, description: 'Meliora offers plant-based cleaning solutions free from harsh chemicals for a safer, greener home.' },
+        { name: 'Dropps', image: droppsImg, description: 'Dropps provides water-soluble, plastic-free laundry and dishwasher pods that are powerful yet planet-friendly.' },
+        { name: 'BioBag', image: biobagImg, description: 'BioBag produces compostable bags and films made from renewable raw materials to reduce plastic waste.' },
+        { name: 'Bumbleride', image: bumblerideImg, description: 'Bumbleride creates eco-friendly, durable baby strollers and gear designed for urban and outdoor adventures.' },
+        { name: 'Un•Paste', image: unpasteImg, description: 'Un•Paste offers toothpaste tablets in plastic-free packaging, promoting zero-waste oral care.' },
+        { name: 'Plaine Products', image: plaineImg, description: 'Plaine Products provides refillable personal care essentials in aluminum bottles to eliminate single-use plastics.' },
+        { name: 'Holy Lamb Organics', image: holyLambImg, description: 'Holy Lamb Organics delivers certified organic wool products that are sustainable, cozy, and hypoallergenic.' },
+        { name: 'Suds & Eco', image: sudsEcoImg, description: 'Suds & Eco creates plant-based, cruelty-free body care items packaged in biodegradable materials.' }
     ];
 
     const visibleCount = 4;
@@ -47,7 +57,8 @@ export default function SuggestGreenBrands() {
     const viewport = { overflow: 'hidden', flex: 1 };
     const track = { display: 'flex', transition: 'transform 0.5s ease', transform: `translateX(-${index * (200 + 16)}px)` };
     const card = { minWidth: 200, marginRight: 16, backgroundColor: '#f9f9f9', borderRadius: '8px', padding: '16px', textAlign: 'center', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', transition: 'transform 0.3s, background-color 0.3s', position: 'relative' };
-    const img = { width: '100%', height: 'auto', borderRadius: '4px' };
+    const img = { maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '4px', display: 'block' };
+    const imageBox = { width: 180, height: 180, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', borderRadius: 8 }; 
     const label = { marginTop: '12px', fontWeight: 600, color: '#2d6a4f' };
     const overlay = { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.6)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.3s', borderRadius: '8px', padding: '16px', boxSizing: 'border-box' };
 
@@ -74,7 +85,9 @@ export default function SuggestGreenBrands() {
                                     const ov = e.currentTarget.querySelector('.overlay'); if (ov) ov.style.opacity = 0;
                                 }}
                             >
-                                <img src={b.image} alt={b.name} style={img} />
+                                <div style={imageBox}>
+                                    <img src={b.image} alt={b.name} style={img} />
+                                </div>
                                 <div style={label}>{b.name}</div>
                                 <div className="overlay" style={overlay}>
                                     <p style={{ margin: 0 }}>{b.description}</p>
