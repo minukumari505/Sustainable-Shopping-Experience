@@ -1,8 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
 import '../Css/NearbyGroups.css';
+
+const locationErrorMessages = {
+  1: 'Location permission was denied. Please allow location access and try again.',
+  2: 'Your location is unavailable. Turn on device location/Wi-Fi and try again.',
+  3: 'Location request timed out. Please try again.'
+};
+
+const getCurrentPosition = () =>
+  new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: false,
+      timeout: 10000,
+      maximumAge: 300000
+    });
+  });
+
+const fetchIpLocation = async () => {
+  const response = await fetch('https://ipapi.co/json/');
+  if (!response.ok) {
+    throw new Error('IP location request failed');
+  }
+
+  const data = await response.json();
+  const latitude = Number(data.latitude);
+  const longitude = Number(data.longitude);
+
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    throw new Error('IP location response did not include coordinates');
+  }
+
+  return { latitude, longitude };
+};
 
 const NearbyGroups = () => {
   const [groups, setGroups] = useState([]);
@@ -10,41 +42,59 @@ const NearbyGroups = () => {
   const [showBadge, setShowBadge] = useState(false);
   const [groupCount, setGroupCount] = useState(0);
   const [radiusKm, setRadiusKm] = useState(5);
+  const [locationError, setLocationError] = useState('');
+  const [isFindingGroups, setIsFindingGroups] = useState(false);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("jwtToken");
   const email = localStorage.getItem("email");
   const userEmail = email;
 
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
-      return;
-    }
+  const loadGroupsForLocation = useCallback(async (latitude, longitude) => {
+    setUserLocation({ lat: latitude, lng: longitude });
 
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
-
-        try {
-          const res = await axios.get(
-            `http://localhost:8080/group/nearby?lat=${latitude}&lng=${longitude}&radius=${radiusKm}`,
-            {
-              headers: { Authorization: `Bearer ${token}` }
-            }
-          );
-          setGroups(res.data);
-        } catch (err) {
-          console.error("Error fetching nearby groups:", err);
-        }
-      },
-      (err) => {
-        console.error("Geolocation error:", err);
-        alert("Please enable location to see nearby groups.");
+    const res = await axios.get(
+      `http://localhost:8080/group/nearby?lat=${latitude}&lng=${longitude}&radius=${radiusKm}`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
       }
     );
-  }, [token, radiusKm]);
+    setGroups(res.data);
+  }, [radiusKm, token]);
+
+  const fetchNearbyGroups = useCallback(async () => {
+    if (!navigator.geolocation) {
+      setLocationError('Browser location is not supported. Trying approximate location...');
+    }
+
+    setIsFindingGroups(true);
+    setLocationError('');
+
+    try {
+      const pos = await getCurrentPosition();
+      const { latitude, longitude } = pos.coords;
+      await loadGroupsForLocation(latitude, longitude);
+    } catch (err) {
+      console.error("Geolocation error:", err);
+
+      try {
+        setLocationError('Device location failed. Trying approximate location...');
+        const ipLocation = await fetchIpLocation();
+        await loadGroupsForLocation(ipLocation.latitude, ipLocation.longitude);
+      } catch (fallbackErr) {
+        console.error("Nearby fallback location failed:", fallbackErr);
+        setUserLocation(null);
+        setGroups([]);
+        setLocationError(locationErrorMessages[err.code] || 'Could not detect your location.');
+      }
+    } finally {
+      setIsFindingGroups(false);
+    }
+  }, [loadGroupsForLocation]);
+
+  useEffect(() => {
+    fetchNearbyGroups();
+  }, [fetchNearbyGroups]);
 
   const joinGroup = async (groupId) => {
     try {
@@ -119,6 +169,34 @@ const NearbyGroups = () => {
       }}
     >
       <h1 style={{ fontSize: 28, marginBottom: 16 }}>📦 Nearby Group Orders</h1>
+
+      {locationError && (
+        <div style={{
+          background: '#fff',
+          borderRadius: 8,
+          padding: 12,
+          marginBottom: 16,
+          color: '#b00020'
+        }}>
+          {locationError}{' '}
+          <button
+            type="button"
+            onClick={fetchNearbyGroups}
+            disabled={isFindingGroups}
+            style={{
+              border: 'none',
+              background: '#2e7d32',
+              color: '#fff',
+              borderRadius: 6,
+              padding: '6px 12px',
+              cursor: isFindingGroups ? 'default' : 'pointer',
+              fontWeight: 600
+            }}
+          >
+            {isFindingGroups ? 'Detecting...' : 'Try again'}
+          </button>
+        </div>
+      )}
 
       {/* Radius Slider */}
       <div style={{ marginBottom: 24 }}>
