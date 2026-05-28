@@ -3,13 +3,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import '../Css/GroupOrder.css';
 import axios from 'axios';
 import { useStateValue } from "../StateProvider";
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 const formatCoords = (latitude, longitude) =>
   `Lat ${latitude.toFixed(5)}, Lng ${longitude.toFixed(5)}`;
 
-const GOOGLE_GEOCODING_KEY = 'AIzaSyCliTDgdPUC04xTYS6RDXsbbKIYR5Ir5W0';
+const GOOGLE_GEOCODING_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+const GOOGLE_GEOCODING_API_URL =
+  process.env.REACT_APP_GOOGLE_GEOCODING_API_URL || 'https://maps.googleapis.com/maps/api/geocode/json';
 
 const locationErrorMessages = {
   1: 'Location permission was denied. Please allow location access and try again.',
@@ -20,34 +22,17 @@ const locationErrorMessages = {
 const getCurrentPosition = () =>
   new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject, {
-      enableHighAccuracy: false,
-      timeout: 10000,
-      maximumAge: 300000
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 60000
     });
   });
 
-const fetchIpLocation = async () => {
-  const response = await fetch('https://ipapi.co/json/');
-  if (!response.ok) {
-    throw new Error('IP location request failed');
-  }
-
-  const data = await response.json();
-  const latitude = Number(data.latitude);
-  const longitude = Number(data.longitude);
-
-  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-    throw new Error('IP location response did not include coordinates');
-  }
-
-  return {
-    latitude,
-    longitude,
-    label: [data.city, data.region, data.country_name].filter(Boolean).join(', ')
-  };
-};
-
 const fetchGoogleCurrentLocation = async () => {
+  if (!GOOGLE_GEOCODING_KEY) {
+    throw new Error('Missing REACT_APP_GOOGLE_MAPS_API_KEY');
+  }
+
   const response = await fetch(
     `https://www.googleapis.com/geolocation/v1/geolocate?key=${GOOGLE_GEOCODING_KEY}`,
     {
@@ -70,8 +55,12 @@ const fetchGoogleCurrentLocation = async () => {
 };
 
 const geocodeWithGoogle = async (address) => {
+  if (!GOOGLE_GEOCODING_KEY) {
+    throw new Error('Missing REACT_APP_GOOGLE_MAPS_API_KEY');
+  }
+
   const response = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_GEOCODING_KEY}`
+    `${GOOGLE_GEOCODING_API_URL}?address=${encodeURIComponent(address)}&key=${GOOGLE_GEOCODING_KEY}`
   );
   const data = await response.json();
 
@@ -129,8 +118,12 @@ const reverseGeocodeWithOpenStreetMap = async (latitude, longitude) => {
 };
 
 const reverseGeocodeWithGoogle = async (latitude, longitude) => {
+  if (!GOOGLE_GEOCODING_KEY) {
+    throw new Error('Missing REACT_APP_GOOGLE_MAPS_API_KEY');
+  }
+
   const response = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_GEOCODING_KEY}`
+    `${GOOGLE_GEOCODING_API_URL}?latlng=${latitude},${longitude}&key=${GOOGLE_GEOCODING_KEY}`
   );
   const data = await response.json();
 
@@ -251,12 +244,9 @@ const resolveManualAddress = async (address) => {
 };
 
 const GroupOrderSetup = () => {
-  const [showToast, setShowToast] = useState(false);
-
-  const { state } = useLocation();
+  useLocation();
   const navigate = useNavigate();
   const [{ basket }, dispatch] = useStateValue();
-  const cartItems = state?.cartItems || [];
   const [groupName, setGroupName] = useState('My Eco Group');
   const [deadlineDays, setDeadlineDays] = useState(3);
   const [showBadge, setShowBadge] = useState(false);
@@ -285,11 +275,9 @@ const GroupOrderSetup = () => {
   }, []);
 
   const reverseGeocode = useCallback(async (latitude, longitude) => {
-    const providers = [
-      reverseGeocodeWithBigDataCloud,
-      reverseGeocodeWithOpenStreetMap,
-      reverseGeocodeWithGoogle
-    ];
+    const providers = GOOGLE_GEOCODING_KEY
+      ? [reverseGeocodeWithGoogle, reverseGeocodeWithBigDataCloud, reverseGeocodeWithOpenStreetMap]
+      : [reverseGeocodeWithBigDataCloud, reverseGeocodeWithOpenStreetMap];
 
     for (const provider of providers) {
       try {
@@ -305,7 +293,7 @@ const GroupOrderSetup = () => {
     setLocationStatus('Address not found. Exact coordinates will be used.');
   }, []);
 
-  const detectLocation = useCallback(async () => {
+    const detectLocation = useCallback(async () => {
     if (!navigator.geolocation) {
       setLocationStatus('Browser location is not supported. Trying approximate location...');
     }
@@ -329,9 +317,9 @@ const GroupOrderSetup = () => {
       }
     } catch (err) {
       console.error("Location error", err);
+      setLocationStatus(locationErrorMessages[err?.code] || 'Device location failed. Trying Google location service...');
 
       try {
-        setLocationStatus('Device location failed. Trying Google location service...');
         const googleLocation = await fetchGoogleCurrentLocation();
         setDetectedLocation(googleLocation.latitude, googleLocation.longitude, googleLocation.label);
 
@@ -343,34 +331,9 @@ const GroupOrderSetup = () => {
         }
       } catch (googleErr) {
         console.error("Google location service failed:", googleErr);
-
-        try {
-          const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-          const geocodingUrl = process.env.REACT_APP_GOOGLE_GEOCODING_API_URL || 'https://maps.googleapis.com/maps/api/geocode/json';
-          
-          const response = await fetch(
-            `${geocodingUrl}?latlng=${latitude},${longitude}&key=${apiKey}`
-          );
-          const data = await response.json();
-          console.log("Geocoding API Response:", data);
-          console.log("Using API Key:", apiKey ? "✅ Loaded from .env" : "❌ No API key found");
-          
-          if (data.status === 'OK' && data.results && data.results.length > 0) {
-            const address = data.results[0].formatted_address;
-            setLocationName(address);
-            console.log("Location found:", address);
-          } else {
-            // Fallback: Use coordinates as location if API fails
-            const fallbackLocation = `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`;
-            setLocationName(fallbackLocation);
-            console.warn("Geocoding failed, using coordinates. API Status:", data.status, "Error:", data.error_message);
-          }
-        } catch (error) {
-          console.error("Reverse geocoding failed:", error);
-          // Fallback: Use coordinates as location
-          const fallbackLocation = `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`;
-          setLocationName(fallbackLocation);
-        }
+        setCoords(null);
+        setLocationName('');
+        setLocationStatus('Unable to detect location automatically. Enter city, pincode, or lat,lng manually.');
       }
     } finally {
       setIsDetectingLocation(false);
@@ -676,3 +639,5 @@ const GroupOrderSetup = () => {
 };
 
 export default GroupOrderSetup;
+
+
