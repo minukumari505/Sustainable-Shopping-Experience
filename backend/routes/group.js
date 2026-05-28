@@ -6,6 +6,8 @@ const authMiddleware = require('../middlewares/auth');
 // 📌 Create a group with coordinates + optional location name
 router.post('/create', async (req, res) => {
   try {
+    console.log("🔄 Creating group with data:", JSON.stringify(req.body, null, 2));
+    
     const {
       name,
       link,
@@ -16,6 +18,14 @@ router.post('/create', async (req, res) => {
       longitude,
       locationName // optional address string
     } = req.body;
+
+    // Validate required fields
+    if (!name || !deadline || !members || !latitude || !longitude) {
+      console.error("❌ Missing required fields");
+      return res.status(400).json({ 
+        error: "Missing required fields: name, deadline, members, latitude, longitude" 
+      });
+    }
 
     const group = new Group({
       name,
@@ -31,8 +41,10 @@ router.post('/create', async (req, res) => {
     });
 
     await group.save();
+    console.log("✅ Group created successfully:", group._id);
     res.status(201).json(group);
   } catch (err) {
+    console.error("❌ Error creating group:", err);
     res.status(500).json({ error: err.message });
   }
 });
