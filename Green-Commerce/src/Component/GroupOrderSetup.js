@@ -34,24 +34,37 @@ const GroupOrderSetup = () => {
 
         // Reverse Geocoding
         try {
+          const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+          const geocodingUrl = process.env.REACT_APP_GOOGLE_GEOCODING_API_URL || 'https://maps.googleapis.com/maps/api/geocode/json';
+          
           const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyCliTDgdPUC04xTYS6RDXsbbKIYR5Ir5W0`
+            `${geocodingUrl}?latlng=${latitude},${longitude}&key=${apiKey}`
           );
           const data = await response.json();
-          if (data.status === 'OK') {
+          console.log("Geocoding API Response:", data);
+          console.log("Using API Key:", apiKey ? "✅ Loaded from .env" : "❌ No API key found");
+          
+          if (data.status === 'OK' && data.results && data.results.length > 0) {
             const address = data.results[0].formatted_address;
             setLocationName(address);
+            console.log("Location found:", address);
           } else {
-            setLocationName('Location not found');
+            // Fallback: Use coordinates as location if API fails
+            const fallbackLocation = `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`;
+            setLocationName(fallbackLocation);
+            console.warn("Geocoding failed, using coordinates. API Status:", data.status, "Error:", data.error_message);
           }
         } catch (error) {
           console.error("Reverse geocoding failed:", error);
-          setLocationName('Error getting location');
+          // Fallback: Use coordinates as location
+          const fallbackLocation = `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`;
+          setLocationName(fallbackLocation);
         }
       },
       (err) => {
         console.error("Location access denied", err);
-        alert("Location permission is required to create a group.");
+        setLocationName('Location access denied - manual entry needed');
+        alert("Location permission is required to create a group. Please enable it in your browser settings.");
       }
     );
   }, []);
@@ -64,6 +77,8 @@ const GroupOrderSetup = () => {
 
   const handleCreateGroup = async () => {
     setErrorMessage('');
+    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8080';
+    
     if (!email) {
       alert("Please log in before creating a group.");
       return navigate("/login");
@@ -101,11 +116,12 @@ const GroupOrderSetup = () => {
 
     try {
       // Create group
-      await axios.post('http://localhost:8080/group/create', newGroup, {
+      await axios.post(`${backendUrl}/group/create`, newGroup, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
+      console.log("✅ Group created successfully");
 
       try {
         const orderPayload = {
@@ -124,7 +140,7 @@ const GroupOrderSetup = () => {
           address: locationName,
           deliveryDate: deadline
         };
-        await axios.post('http://localhost:8080/place-order', orderPayload);
+        await axios.post(`${backendUrl}/place-order`, orderPayload);
       } catch (orderErr) {
         console.error('Error saving order:', orderErr);
       }
@@ -133,7 +149,7 @@ const GroupOrderSetup = () => {
       dispatch({ type: "CLEAR_BASKET" });
 
       // Fetch updated group count
-      const groupRes = await axios.get('http://localhost:8080/group/my-groups', {
+      const groupRes = await axios.get(`${backendUrl}/group/my-groups`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -143,7 +159,8 @@ const GroupOrderSetup = () => {
 
     } catch (err) {
       console.error("Error creating group:", err);
-      setErrorMessage('Failed to create group. Please try again.');
+      console.error("Error response:", err.response?.data);
+      setErrorMessage(err.response?.data?.error || 'Failed to create group. Please try again.');
     }
   };
 
