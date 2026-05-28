@@ -371,11 +371,6 @@ const GroupOrderSetup = () => {
           const fallbackLocation = `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`;
           setLocationName(fallbackLocation);
         }
-      },
-      (err) => {
-        console.error("Location access denied", err);
-        setLocationName('Location access denied - manual entry needed');
-        alert("Location permission is required to create a group. Please enable it in your browser settings.");
       }
     } finally {
       setIsDetectingLocation(false);
