@@ -1,5 +1,5 @@
 import React from "react";
-import { useSpring, animated, useTrail, useSprings } from "react-spring";
+import { useSpring, animated, useTrail, useSprings } from "@react-spring/web";
 
 const YEAR_LINKS = [
   { year: "2024", url: "https://sustainability.aboutamazon.com/2022-sustainability-report.pdf" },
