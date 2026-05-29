@@ -148,7 +148,7 @@ export default function SellerSection() {
             payload.append("grade", modalGrade);
           }
     try {
-      const res = await fetch("https://amazon-hackon-s2-buckets.vercel.app/addproduct", {
+      const res = await fetch("http://localhost:8080/addproduct", {
         method: "POST",
         body: payload,
       });

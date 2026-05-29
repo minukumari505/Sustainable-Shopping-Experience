@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@react-google-maps/api": "^2.20.7",
+    "numpy": "^0.0.1",
     "party-js": "^2.2.0"
   }
 }

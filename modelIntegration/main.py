@@ -109,3 +109,79 @@ async def recommend(req: RecoRequest):
 
     subset = df.iloc[rec_idxs][["_id", "productImage", "description"]]
     return {"recommendations": subset.to_dict(orient="records")}
+
+
+
+
+
+
+# library=>> collection of functions and classes that you can use to build your application. 
+
+
+# package => collection of modules that provide specific functionality.
+# A package is a collection of code that helps you do a specific task.
+# Examples:
+# A package for handling dates
+# A package for making HTTP requests
+# A package for animations
+    
+   
+
+# framework => collection of packages and modules that provide a 
+# structure and set of rules for building applications.
+        # examples:
+        # react or angular for building user interfaces
+        # A web framework like Django or Flask for building web applications
+        # A machine learning framework like TensorFlow or PyTorch for building ML models
+        # A game development framework like Unity or Unreal Engine for building games 
+
+# Library (React) → helps you build parts of an app.
+# Framework (Angular) → provides the full system for building the app.
+
+
+
+
+# fastapi => framework for building APIs in Python
+
+
+
+# What is FastAPI?
+
+# FastAPI is:
+
+# A web framework for Python
+# Designed for building REST APIs
+
+# full form of REST => Representational State Transfer
+
+# Built on top of:
+
+# Starlette (web features)
+# Pydantic (data validation)
+
+# starlette => handles the web server, routing, and async capabilities
+# pydantic => handles data validation and serialization
+
+# It is called FastAPI because:=>fast to run and fast to code.
+# it is fast to run
+# and fast to develop with
+
+
+# library,package, framework
+# fastapi<=pydantic,starlette,
+
+
+
+
+# tf-idf => term frequency inverse document frequency
+# cosine similarity => a measure of similarity between two vectors in a multi-dimensional space.
+   #  It is calculated as the cosine of the angle between the two vectors, 
+   # which ranges from -1 (completely dissimilar) to 1 (completely similar). 
+   # In the context of text data, it is often used to compare the similarity of documents
+   #  based on their term frequency vectors.
+
+
+
+
+#   why tf-idf being used in recommendation system?
+# TF-IDF is used in recommendation systems to represent the importance of words in a document relative
