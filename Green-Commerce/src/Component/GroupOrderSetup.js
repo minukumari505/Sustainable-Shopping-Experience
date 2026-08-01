@@ -413,7 +413,7 @@ const GroupOrderSetup = () => {
 
     try {
       // Create group
-      await axios.post(`${backendUrl}/group/create`, newGroup, {
+      const createRes = await axios.post(`${backendUrl}/group/create`, newGroup, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -445,13 +445,20 @@ const GroupOrderSetup = () => {
       // Clear basket after group creation
       dispatch({ type: "CLEAR_BASKET" });
 
-      // Fetch updated group count
-      const groupRes = await axios.get(`${backendUrl}/group/my-groups`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      setGroupCount(groupRes.data.length);
+      // Fetch updated group count. If this follow-up request fails, the group was
+      // still created successfully, so keep the success flow instead of showing
+      // a false "failed to create" error.
+      try {
+        const groupRes = await axios.get(`${backendUrl}/group/my-groups`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setGroupCount(groupRes.data.length);
+      } catch (groupCountErr) {
+        console.error('Error fetching updated group count:', groupCountErr);
+        setGroupCount(createRes.data ? 1 : 0);
+      }
       setShowBadge(true);
 
     } catch (err) {

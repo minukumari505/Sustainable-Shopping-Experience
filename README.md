@@ -332,6 +332,6 @@ This project is licensed under the MIT License
 • pip install fastapi uvicorn pydantic
 • pip install pandas numpy
 • pip install scikit-learn==1.6.1
-• uvicorn main:app --reload
+• python -m uvicorn main:app --reload
 
 "# Sustainable-Shopping-Experience" 
